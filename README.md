@@ -54,8 +54,7 @@
      kafka.applicationId=etl-kafka-stream
      kafka.brokerList=localhost:9092
 
-     kafka.task1.topic=streams-event-1
-     kafka.task2.topic=streams-event-2
+     kafka.task.topic=streams-event
 
      mysql.connectionString=jdbc:mysql://127.0.0.1:3306/database?verifyServerCertificate=false&useSSL=false
      mysql.username=username
