@@ -22,7 +22,6 @@ public class App {
     TopicService topicInfo = new TopicDelegate(topicName, className, "JSON").getTopicInfo();
     DBService dbService = new DBDelegate("MySQL").getTargetService();
 
-
     DeduplicationStream deduplicationStream = new DeduplicationStream<>(topicInfo, dbService);
 
     StreamsBuilder task = deduplicationStream.getBuilder();

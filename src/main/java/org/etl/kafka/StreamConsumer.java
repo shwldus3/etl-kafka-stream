@@ -23,7 +23,7 @@ public class StreamConsumer {
     execute(builder);
   }
 
-  public void execute(StreamsBuilder builder) {
+  private void execute(StreamsBuilder builder) {
     kafkaStreams = new KafkaStreams(builder.build(), config);
 
     kafkaStreams.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
