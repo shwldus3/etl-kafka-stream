@@ -1,7 +1,9 @@
 package org.etl.model;
 
-import java.sql.*;
 import javax.sql.DataSource;
+
+import java.sql.Connection;
+import java.sql.SQLException;
 
 import org.apache.commons.dbcp.ConnectionFactory;
 import org.apache.commons.dbcp.DriverManagerConnectionFactory;
@@ -13,11 +15,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class DBConnection {
+public class MySqlConnection {
   private DataSource dataSource;
   private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-  public DBConnection() {
+  public MySqlConnection() {
     this.dataSource = init();
     logger.info("Create DB Connection Pool");
   }
@@ -38,28 +40,7 @@ public class DBConnection {
     return new PoolingDataSource(connPool);
   }
 
-  public void executeQuery(String query) {
-    Connection conn = null;
-    Statement stmt = null;
-    try {
-      conn = dataSource.getConnection();
-      stmt = conn.createStatement();
-
-      logger.info("DB => " + query);
-      stmt.executeUpdate(query);
-
-      stmt.close();
-      conn.close();
-
-    } catch (Exception e) {
-      e.printStackTrace();
-    } finally {
-      try {
-        if (stmt != null) stmt.close();
-        if (conn != null) conn.close();
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-    }
+  public Connection getConnection() throws SQLException{
+    return this.dataSource.getConnection();
   }
 }

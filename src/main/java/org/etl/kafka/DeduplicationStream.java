@@ -6,29 +6,24 @@ import org.apache.kafka.streams.kstream.KStream;
 import org.apache.kafka.streams.kstream.Serialized;
 import org.apache.kafka.streams.kstream.TimeWindows;
 import org.apache.kafka.streams.kstream.Windowed;
+import org.etl.model.DBService;
+import org.etl.topics.TopicService;
+import org.etl.schema.FormatConverter;
+import java.util.concurrent.TimeUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.etl.model.DBConnection;
-import java.util.concurrent.TimeUnit;
-import org.etl.kafka.TopicService.Topic;
 
-public class DeduplicationStream<T> extends StreamUtil<T> {
+public class DeduplicationStream<T> {
   private final static StreamsBuilder builder = new StreamsBuilder();
-  private final static DBConnection db = new DBConnection();
   private Logger logger = LoggerFactory.getLogger(this.getClass());
-  private Topic<String, T> topicInfo;
+  private FormatConverter fc = new FormatConverter<>();
+  private TopicService<T> topicInfo;
+  private DBService dbService;
 
-  public DeduplicationStream(String topicName, String className) {
-    String schemaPackage = "org.etl.schema";
-
-    try {
-      Class topicClass = Class.forName(schemaPackage + "." + className);
-      topicInfo = new TopicService.JsonTopic(topicName, topicClass).getTopicInfo();
-    } catch (ClassNotFoundException e) {
-      e.printStackTrace();
-    }
-
+  public DeduplicationStream(TopicService<T> topicInfo, DBService dbService) {
+    this.topicInfo = topicInfo;
+    this.dbService = dbService;
     createStream();
   }
 
@@ -44,8 +39,7 @@ public class DeduplicationStream<T> extends StreamUtil<T> {
         .toStream()
         .foreach((Windowed<T> windowedKey, Long count) -> {
           logger.info(windowedKey.key().toString());
-          String query = super.getQuery(windowedKey.key());
-          db.executeQuery(query);
+          dbService.process(fc.getQuery(windowedKey.key()));
         });
   }
 

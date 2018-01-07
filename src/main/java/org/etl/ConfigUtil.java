@@ -10,9 +10,8 @@ public class ConfigUtil {
 
   public ConfigUtil() {
     try {
-      InputStream file = App.class.getResourceAsStream("/config.properties");
-      config.load(file);
-      file.close();
+      InputStream inputStream = this.getClass().getResourceAsStream("/config.properties");
+      config.load(inputStream);
     } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {

@@ -6,10 +6,9 @@
 
 1. Maven Project
 2. POJO 
-3. MultiThread Parallel Processing
-4. Clean Code (OOP)
-5. Kafka Stream
-6. Mysql (RDB)
+3. Clean Code (OOP)
+4. Kafka Stream
+5. Mysql (RDB)
 
 ### 02. TO-DO
 

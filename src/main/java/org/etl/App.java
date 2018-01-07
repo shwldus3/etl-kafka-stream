@@ -2,10 +2,14 @@ package org.etl;
 
 import org.apache.kafka.streams.StreamsBuilder;
 import org.etl.kafka.DeduplicationStream;
+import org.etl.model.DBDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import org.etl.kafka.StreamConsumer;
+import org.etl.topics.TopicDelegate;
+import org.etl.topics.TopicService;
+import org.etl.model.DBService;
 
 public class App {
   public static void main(String[] args) {
@@ -13,19 +17,17 @@ public class App {
     logger.info("Start ETL App");
 
     String className = "Event";
-    String task1TopicName = new ConfigUtil().getProperty("kafka.task1.topic");
-    String task2TopicName = new ConfigUtil().getProperty("kafka.task2.topic");
+    String topicName = new ConfigUtil().getProperty("kafka.task.topic");
+
+    TopicService topicInfo = new TopicDelegate(topicName, className, "JSON").getTopicInfo();
+    DBService dbService = new DBDelegate("MySQL").getTargetService();
 
 
-    StreamsBuilder task1 = new DeduplicationStream<>(task1TopicName, className).getBuilder();
-    StreamsBuilder task2 = new DeduplicationStream<>(task2TopicName, className).getBuilder();
-    StreamsBuilder[] taskList = {task1, task2};
+    DeduplicationStream deduplicationStream = new DeduplicationStream<>(topicInfo, dbService);
 
-    StreamConsumer streamConsumer = new StreamConsumer();
-    streamConsumer.execute(taskList, 2);
+    StreamsBuilder task = deduplicationStream.getBuilder();
+    new StreamConsumer(task);
 
     logger.info("Start Kafka Stream");
-
-    streamConsumer.shutdown();
   }
 }
