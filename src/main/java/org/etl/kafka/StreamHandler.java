@@ -15,7 +15,7 @@ public class StreamHandler implements Runnable{
     kafkaStreams = new KafkaStreams(builder.build(), config);
 
     kafkaStreams.setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
-      logger.error("예상치 못한 에러가 발생했습니다.");
+      logger.error("Unexpected Error in Kafka Stream");
       kafkaStreams.close();
     });
 
